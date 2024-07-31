@@ -1,0 +1,6 @@
+# Exclude unnecessary files and directories
+.git
+/vue_frontend/node_modules
+vue_frontend/node_modules
+*.log
+*.md

@@ -1,0 +1,63 @@
+# version: '3'
+# services:
+#   frontend:
+#     build:
+#       context: .
+#       dockerfile: vue_frontend/Dockerfile
+#     ports:
+#       - "80:80"
+#     networks:
+#       - app-network
+
+#   backend:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       - PORT=3000
+#       - DB_URL=host=db user=root password=secret dbname=simple port=5432 sslmode=disable
+#       - SECRET=ddjkwrijvdkfjejdlvdbnmdnvdjfwdd
+#     networks:
+#       - app-network
+
+#   db:
+#     image:  postgres:15.6
+#     environment:
+#       POSTGRES_DB: simple
+#       POSTGRES_USER: root
+#       POSTGRES_PASSWORD: secret
+#     networks:
+#       - app-network
+
+# networks:
+#   app-network:
+
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: vue_frontend/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - helloapp_app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_URL=host=postgres user=root password=secret dbname=simple port=5432 sslmode=disable
+      - SECRET=ddjkwrijvdkfjejdlvdbnmdnvdjfwdd
+    networks:
+      - helloapp_app-network
+
+networks:
+  helloapp_app-network:
+    external: true

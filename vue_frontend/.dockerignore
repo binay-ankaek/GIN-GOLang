@@ -1,0 +1,5 @@
+# Exclude unnecessary files and directories
+node_modules
+.git
+*.log
+*.md
