@@ -198,81 +198,40 @@ func TestRegisterUser_BindJSONError(t *testing.T) {
 	assert.Contains(t, resp.Body.String(), "error")
 }
 
-// func TestLoginUser_Success(t *testing.T) {
-
-// 	// Create a new instance of the mock repository
-// 	mockRepo := &repository.MockUserRepository{}
-
-// 	// Set up mock behavior for a successful login
-// 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
-// 	mockRepo.GetUserByPhoneFunc = func(phone string) (*model.User, error) {
-// 		if phone == "1234567890" {
-// 			return &model.User{
-// 				Phone:    phone,
-// 				Password: string(hashedPassword),
-// 			}, nil
-// 		}
-// 		return nil, nil
-// 	}
-
-// 	// Create a new instance of UserService with the mock repository
-// 	userService := user.NewUserService(mockRepo)
-// 	authHandler := userhttp.NewAuthHandler(userService)
-
-// 	// Set up Gin router and test recorder
-// 	router := gin.Default()
-// 	router.POST("/api/auth/login", authHandler.Login)
-
-// 	// Create a request with the proper route and body
-// 	requestBody := `{"phone": "1234567890", "password": "password123"}`
-// 	req, _ := http.NewRequest(http.MethodPost, "/api/auth/login", strings.NewReader(requestBody))
-// 	req.Header.Set("Content-Type", "application/json")
-// 	resp := httptest.NewRecorder()
-// 	router.ServeHTTP(resp, req)
-
-// 	// Assert results
-// 	assert.Equal(t, http.StatusOK, resp.Code)
-// 	assert.Contains(t, resp.Body.String(), "login successful")
-// 	assert.Contains(t, resp.Body.String(), "mockToken123")
-// }
-
 func TestLoginUser_Success(t *testing.T) {
-	// Mock user data
-	mockUser := &model.User{
-		ID:       1,
-		Phone:    "1234567890",
-		Password: "$2a$10$QWERTYUIOPASDFGHJKLZXCVBNM", // This should be a bcrypt hash of the password
+
+	// Create a new instance of the mock repository
+	mockRepo := &repository.MockUserRepository{}
+
+	// Set up mock behavior for a successful login
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	mockRepo.GetUserByPhoneFunc = func(phone string) (*model.User, error) {
+		if phone == "1234567890" {
+			return &model.User{
+				Phone:    phone,
+				Password: string(hashedPassword),
+			}, nil
+		}
+		return nil, nil
 	}
 
-	// Mock the repository
-	mockRepo := &repository.MockUserRepository{
-		GetUserByPhoneFunc: func(phone string) (*model.User, error) {
-			return mockUser, nil
-		},
-	}
+	// Create a new instance of UserService with the mock repository
+	userService := user.NewUserService(mockRepo)
+	authHandler := userhttp.NewAuthHandler(userService)
 
-	// Save the original GenerateToken function to restore it later
-	originalGenerateToken := user.GenerateToken
+	// Set up Gin router and test recorder
+	router := gin.Default()
+	router.POST("/api/auth/login", authHandler.Login)
 
-	// Mock the GenerateToken function to always return "mockToken123"
-	user.GenerateToken = func(userID uint) (string, error) {
-		return "mockToken123", nil
-	}
+	// Create a request with the proper route and body
+	requestBody := `{"phone": "1234567890", "password": "password123"}`
+	req, _ := http.NewRequest(http.MethodPost, "/api/auth/login", strings.NewReader(requestBody))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
 
-	// Ensure the original GenerateToken function is restored after the test
-	defer func() {
-		user.GenerateToken = originalGenerateToken
-	}()
-
-	// Create the service with the mocked repository
-	userService := &user.UserService{
-		UserRepository: mockRepo,
-	}
-
-	// Call the LoginUser function
-	token, err := userService.LoginUser(mockUser.Phone, "password")
-
-	// Assertions
-	assert.NoError(t, err)
-	assert.Equal(t, "mockToken123", token)
+	// Assert results
+	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Contains(t, resp.Body.String(), "login successful")
+	assert.Contains(t, resp.Body.String(), "mockToken123")
 }
