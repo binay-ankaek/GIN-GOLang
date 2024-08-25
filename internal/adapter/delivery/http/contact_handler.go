@@ -3,12 +3,11 @@ package http
 import (
 	"helloapp/internal/app/contact"
 	// "helloapp/internal/app/user"
-	"net/http"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
+	"strconv"
 )
 
 type ContactHandler struct {
@@ -20,25 +19,6 @@ func NewContactHandler(contactService *contact.ContactService) *ContactHandler {
 		contactService: contactService,
 	}
 }
-
-// func (h *ContactHandler) AddContact(c *gin.Context) {
-// 	var req struct {
-// 		UserID      uint   `json:"user_id"`
-// 		PhoneNumber string `json:"phone_number"`
-// 	}
-
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	if err := h.contactService.AddContact(req.UserID, req.PhoneNumber); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"message": "contact added successfully"})
-// }
 
 func (h *ContactHandler) AddContact(c *gin.Context) {
 	var req struct {
@@ -58,7 +38,7 @@ func (h *ContactHandler) AddContact(c *gin.Context) {
 	}
 
 	if err := h.contactService.AddContact(userID.(uint), req.Phone, req.Name); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -128,66 +108,13 @@ func (h *ContactHandler) DeleteContact(c *gin.Context) {
 	}
 
 	if err := h.contactService.DeleteContact(userID.(uint), uint(contactID)); err != nil {
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "contact deleted successfully"})
 }
-
-// func (h *ContactHandler) SearchContact(c *gin.Context) {
-// 	userID, exists := c.Get("userID")
-// 	if !exists {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-// 		return
-// 	}
-
-// 	phone := c.Query("phone")
-// 	contact, err := h.contactService.SearchContact(userID.(uint), phone)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-//		c.JSON(http.StatusOK, contact)
-//	}
-// func (h *ContactHandler) SearchContact(c *gin.Context) {
-// 	userID, exists := c.Get("userID")
-// 	if !exists {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-// 		return
-// 	}
-
-// 	phone := c.Query("phone")
-// 	if phone == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "phone query parameter is required"})
-// 		return
-// 	}
-
-// 	user, contact, err := h.contactService.GetProfileByPhone(phone)
-// 	if err != nil && err != gorm.ErrRecordNotFound {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	// If user is found, return the user profile
-// 	if user != nil {
-// 		c.JSON(http.StatusOK, user)
-// 		return
-// 	}
-
-// 	contact, err := h.contactService.SearchContact(userID.(uint), phone)
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			c.JSON(http.StatusNotFound, gin.H{"error": "contact not found"})
-// 		} else {
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		}
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, contact)
-// }
 
 func (h *ContactHandler) SearchContact(c *gin.Context) {
 

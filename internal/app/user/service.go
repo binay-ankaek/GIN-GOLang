@@ -8,12 +8,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// TokenGenerator defines a function type for generating tokens
+type TokenGenerator func(userID uint) (string, error)
+
 type UserService struct {
 	userRepository repository.UserRepository
+	generateToken  TokenGenerator
 }
 
-func NewUserService(userRepository repository.UserRepository) *UserService {
-	return &UserService{userRepository: userRepository}
+func NewUserService(userRepository repository.UserRepository, generateToken TokenGenerator) *UserService {
+	return &UserService{
+		userRepository: userRepository,
+		generateToken:  generateToken,
+	}
 }
 
 func (s *UserService) RegisterUser(phone, password string) error {
@@ -42,7 +49,13 @@ func (s *UserService) RegisterUser(phone, password string) error {
 		Password: string(hashedPassword),
 	}
 
-	return s.userRepository.CreateUser(newUser)
+	// return s.userRepository.CreateUser(newUser)
+	err = s.userRepository.CreateUser(newUser)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *UserService) LoginUser(phone, password string) (string, error) {

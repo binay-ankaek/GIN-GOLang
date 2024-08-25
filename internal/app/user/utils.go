@@ -32,3 +32,8 @@ func generateToken(userID uint) (string, error) {
 
 	return tokenString, nil
 }
+
+// GenerateUserToken is a public function to generate a JWT token
+func GenerateUserToken(userID uint) (string, error) {
+	return generateToken(userID)
+}

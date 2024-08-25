@@ -39,7 +39,7 @@ func main() {
 	contactRepository := repository.NewContactRepository(db)
 
 	// Initialize services
-	userService := user.NewUserService(userRepository)
+	userService := user.NewUserService(userRepository, nil)
 	contactService := contact.NewContactService(contactRepository, userRepository)
 
 	// Initialize HTTP server

@@ -132,5 +132,3 @@ func (h *AuthHandler) DeleteProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "user profile deleted successfully"})
 }
-
-// Implement other authentication-related handlers like Login, UpdateProfile, etc.
