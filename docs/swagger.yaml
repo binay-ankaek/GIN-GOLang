@@ -1,0 +1,353 @@
+definitions:
+  http.AddContactRequest:
+    properties:
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "1234567890"
+        type: string
+    type: object
+  http.AddContactResponse:
+    properties:
+      message:
+        example: contact added successfully
+        type: string
+    type: object
+  http.ContactResponse:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "1234567890"
+        type: string
+    type: object
+  http.ErrorResponse:
+    properties:
+      error:
+        example: Invalid input
+        type: string
+    type: object
+  http.GetProfileResponse:
+    properties:
+      email:
+        example: user@example.com
+        format: string
+        type: string
+      image:
+        example: http://example.com/image.jpg
+        format: string
+        type: string
+      name:
+        example: John Doe
+        format: string
+        type: string
+      phone:
+        example: "1234567890"
+        format: string
+        type: string
+    type: object
+  http.LoginRequest:
+    properties:
+      password:
+        example: password123
+        format: string
+        type: string
+      phone:
+        example: "1234567890"
+        format: string
+        type: string
+    type: object
+  http.LoginResponse:
+    properties:
+      message:
+        example: login successful
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+  http.RegisterRequest:
+    properties:
+      password:
+        example: password123
+        format: string
+        type: string
+      phone:
+        example: "1234567890"
+        format: string
+        type: string
+    type: object
+  http.SuccessResponse:
+    properties:
+      message:
+        example: operation successful
+        type: string
+    type: object
+  http.UpdateProfileRequest:
+    properties:
+      email:
+        example: newuser@example.com
+        format: string
+        type: string
+      image:
+        example: http://example.com/newimage.jpg
+        format: string
+        type: string
+      name:
+        example: Jane Doe
+        format: string
+        type: string
+      password:
+        example: newpassword123
+        format: string
+        type: string
+      phone:
+        example: "1234567890"
+        format: string
+        type: string
+    type: object
+  http.UpdateProfileResponse:
+    properties:
+      email:
+        example: newuser@example.com
+        format: string
+        type: string
+      image:
+        example: http://example.com/newimage.jpg
+        format: string
+        type: string
+      name:
+        example: Jane Doe
+        format: string
+        type: string
+      phone:
+        example: "1234567890"
+        format: string
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a simple RESTful Service API written in Go using Gin web framework
+  title: aok-connect Business API
+  version: "1.0"
+paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token
+      parameters:
+      - description: User login details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Login to the account
+      tags:
+      - Users
+  /api/auth/profile:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the user profile associated with the provided token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Delete user profile
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the profile of the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.GetProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Get user profile
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Update user profile information
+      parameters:
+      - description: User profile update details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.UpdateProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Update user profile
+      tags:
+      - Users
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new account
+      parameters:
+      - description: User registration details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Register a new account
+      tags:
+      - Users
+  /api/contact/:
+    get:
+      description: Retrieve all contacts for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.ContactResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Get all contacts
+      tags:
+      - Contacts
+  /api/contact/add:
+    post:
+      consumes:
+      - application/json
+      description: Add a new contact for the authenticated user
+      parameters:
+      - description: Contact details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.AddContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.AddContactResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Add a new contact
+      tags:
+      - Contacts
+securityDefinitions:
+  BearerToken:
+    in: Header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

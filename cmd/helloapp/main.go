@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	// "github.com/subosito/gotenv"
-	"github.com/gin-contrib/cors"
 	"helloapp/internal/adapter/delivery/http"
 	"helloapp/internal/app/contact"
 	"helloapp/internal/app/middleware"
@@ -15,8 +14,22 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
+
+	_ "helloapp/docs" // Import the generated docs
+
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 )
+
+// @title               aok-connect Business API
+// @version             1.0
+// @description         This is a simple RESTful Service API written in Go using Gin web framework
+// @securityDefinitions.apikey BearerToken
+// @in Header
+// @name Authorization
 
 func init() {
 
@@ -44,6 +57,7 @@ func main() {
 
 	// Initialize HTTP server
 	router := gin.Default()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:8080"}, // Allow your Vue app's origin
