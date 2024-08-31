@@ -74,3 +74,34 @@ type ContactResponse struct {
 	Phone string `json:"phone" example:"1234567890" description:"Contact's phone number"`
 	Name  string `json:"name" example:"John Doe" description:"Contact's name"`
 }
+
+// UpdateContactRequest represents the request payload to update a contact.
+type UpdateContactRequest struct {
+	Phone string `json:"phone" example:"1234567890" description:"Contact's phone number"`
+	Name  string `json:"name" example:"John Doe" description:"Contact's name"`
+}
+
+// UpdateContactResponse represents the success response after updating a contact
+type UpdateContactResponse struct {
+	Message string `json:"message"`
+}
+
+// SearchContactRequest represents the query parameters for the search contact request.
+type SearchContactRequest struct {
+	Phone string `form:"phone" json:"phone" binding:"required"`
+}
+
+// UserResponse represents the response structure for a user.
+type UserResponse struct {
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email,omitempty"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+// DeleteContactResponse represents a successful deletion response.
+type DeleteContactResponse struct {
+	Message string `json:"message"`
+}

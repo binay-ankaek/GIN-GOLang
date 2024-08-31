@@ -26,6 +26,11 @@ definitions:
         example: "1234567890"
         type: string
     type: object
+  http.DeleteContactResponse:
+    properties:
+      message:
+        type: string
+    type: object
   http.ErrorResponse:
     properties:
       error:
@@ -88,6 +93,20 @@ definitions:
         example: operation successful
         type: string
     type: object
+  http.UpdateContactRequest:
+    properties:
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "1234567890"
+        type: string
+    type: object
+  http.UpdateContactResponse:
+    properties:
+      message:
+        type: string
+    type: object
   http.UpdateProfileRequest:
     properties:
       email:
@@ -128,6 +147,21 @@ definitions:
       phone:
         example: "1234567890"
         format: string
+        type: string
+    type: object
+  http.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      updated_at:
         type: string
     type: object
 info:
@@ -309,6 +343,82 @@ paths:
       summary: Get all contacts
       tags:
       - Contacts
+  /api/contact/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a contact by its ID, if the contact belongs to the authenticated
+        user.
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response indicating contact deletion
+          schema:
+            $ref: '#/definitions/http.DeleteContactResponse'
+        "400":
+          description: Bad request, usually due to invalid contact ID
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized, when the user is not logged in
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Delete a contact
+      tags:
+      - Contacts
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Contact update details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.UpdateContactResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Update a contact
+      tags:
+      - Contacts
   /api/contact/add:
     post:
       consumes:
@@ -343,6 +453,47 @@ paths:
       security:
       - BearerToken: []
       summary: Add a new contact
+      tags:
+      - Contacts
+  /api/contact/search:
+    get:
+      consumes:
+      - application/json
+      description: Search for a contact by phone number. Returns the user's profile
+        if the phone is registered, or the contact details if it exists in the user's
+        contact list.
+      parameters:
+      - description: Phone number to search for
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with contact details
+          schema:
+            $ref: '#/definitions/http.ContactResponse'
+        "400":
+          description: Bad request, usually due to missing query parameters
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized, when the user is not logged in
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not found, when the phone number is not registered or in contacts
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Search for a contact
       tags:
       - Contacts
 securityDefinitions:
